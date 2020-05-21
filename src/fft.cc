@@ -5,7 +5,7 @@ using namespace emscripten;
 
 class FFT {
 public:
-  FFT(uint_t buf_size) {
+  FFT(unsigned int buf_size) {
     buffer = new_fvec(buf_size);
     aubio_fft = new_aubio_fft(buf_size);
   }
@@ -60,7 +60,7 @@ private:
 
 EMSCRIPTEN_BINDINGS(FFT) {
   class_<FFT>("FFT")
-    .constructor<uint_t>()
+    .constructor<unsigned int>()
     .function("forward", &FFT::Forward)
     .function("inverse", &FFT::Inverse);
 }

@@ -25,6 +25,15 @@ declare namespace Aubio {
     do(buffer: InputArray): number;
   }
 
+  class Note {
+    constructor(
+      bufferSize: number, // size of the input buffer to analyse
+      hopSize: number, // step size between two consecutive analysis instant
+      sampleRate: number // sampling rate of the signal
+    );
+    do(buffer: InputArray): number;
+  }
+
   class Tempo {
     constructor(
       bufferSize: number, // length of FFT

@@ -6,7 +6,7 @@ using namespace emscripten;
 class Tempo {
 public:
   Tempo(uint_t buf_size, uint_t hop_size, uint_t sample_rate) {
-    buffer = new_fvec(hop_size);
+    buffer = new_fvec(buf_size);
     aubio_tempo = new_aubio_tempo("default", buf_size, hop_size, sample_rate);
   }
 
