@@ -51,7 +51,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} \
   -s EXPORT_NAME=Aubio \
   -s NO_FILESYSTEM=1 \
   -std=c++11 \
-  -g --closure 1 --llvm-lto 1 --bind")
+  --closure 1 --llvm-lto 1 --bind")
 
 include_directories(src)
 include_directories(aubio/src)

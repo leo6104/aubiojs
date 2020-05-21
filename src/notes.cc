@@ -20,23 +20,32 @@ public:
     return aubio_notes_set_silence(aubio_notes, input.as<float>());
   }
 
-  float Do(val input) {
+  int MinIoiMS(val input) {
+    return aubio_notes_set_minioi_ms(aubio_notes, input.as<float>());
+  }
+
+  val Do(val input) {
     for (int i = 0; i < buffer->length; i += 1) {
       buffer->data[i] = input[i].as<float>();
     }
     aubio_notes_do(aubio_notes, buffer, output);
-    return output->data[0];
+    val result = val::array();
+    result.set(0, output->data[0]);
+    result.set(1, output->data[1]);
+    result.set(2, output->data[2]);
+    return result;
   }
 
 private:
   aubio_notes_t *aubio_notes;
   fvec_t *buffer;
-  fvec_t *output = new_fvec(1);
+  fvec_t *output = new_fvec(3);
 };
 
 EMSCRIPTEN_BINDINGS(Notes) {
   class_<Notes>("Notes")
     .constructor<uint_t, uint_t, uint_t>()
     .function("do", &Notes::Do)
+    .function("minioims", &Notes::MinIoiMS)
     .function("silence", &Notes::Silence);
 }

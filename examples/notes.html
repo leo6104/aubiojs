@@ -37,7 +37,6 @@
 function play() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
   const scriptProcessor = audioContext.createScriptProcessor(2048, 1, 1);
-  const maxFrequency = 1000;
   let count = 0;
 
   // const audio = new Audio();
@@ -51,7 +50,7 @@ function play() {
 
   navigator.mediaDevices.getUserMedia({audio: true}).then(function (stream) {
     audioContext.createMediaStreamSource(stream).connect(scriptProcessor)
-  })
+  });
 
   const $canvas = document.querySelector('canvas');
   const canvasContext = $canvas.getContext('2d');
@@ -60,22 +59,19 @@ function play() {
 
   scriptProcessor.connect(audioContext.destination)
   Aubio().then(function (aubio) {
-    const notesDetector = new aubio.Notes(scriptProcessor.bufferSize, 1, audioContext.sampleRate)
+    const notesDetector = new aubio.Notes(scriptProcessor.bufferSize, 256, audioContext.sampleRate)
+    notesDetector.silence(-80.0);
+    notesDetector.minioims(10);
     scriptProcessor.addEventListener('audioprocess', function (event) {
-      const frequency = notesDetector.do(event.inputBuffer.getChannelData(0))
-      console.log(frequency);
-      // const x = count % $canvas.width
+      const scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
-      // canvasContext.beginPath()
-      // canvasContext.clearRect(x, 0, 1, $canvas.height)
-      // canvasContext.fillRect(x + 1, 0, 1, $canvas.height)
-
-      // if (frequency) {
-      //   pitch.innerHTML = frequency.toFixed(1) + ' Hz'
-      //   const y = parseInt(frequency / maxFrequency * $canvas.height)
-      //   canvasContext.arc(x, y, 1, 0, 2 * Math.PI)
-      //   canvasContext.fill()
-      // }
+      const [onMidi, velocity, offMidi] = notesDetector.do(event.inputBuffer.getChannelData(0));
+      if (onMidi !== 0) {
+        console.log('on', scale[onMidi % 12], velocity);
+      }
+      if (offMidi !== 0) {
+        console.log('off', scale[offMidi % 12], velocity);
+      }
 
       count += 1
     })
